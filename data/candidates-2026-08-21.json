@@ -2,7 +2,7 @@
  "run_date": "2026-08-21",
  "window_start": "2026-08-13",
  "window_end": "2026-08-20",
- "generated_utc": "2026-08-21T11:26:40+00:00",
+ "generated_utc": "2026-08-21T11:47:53+00:00",
  "discovery_mode": "Crossref REST API (single path)",
  "journal_stats": [
   {
@@ -444,20 +444,6 @@
    ]
   },
   {
-   "doi": "10.1002/adma.74460",
-   "title": "Neuron‐Inspired Orbital‐Interface Engineering of FeS 2 Anodes for Ultrafast and Durable Potassium Storage",
-   "journal": "Advanced Materials",
-   "authors": "Lizhong Liu et al.",
-   "date": "2026-08-17",
-   "date_kind": "published-online (Crossref)",
-   "url": "https://doi.org/10.1002/adma.74460",
-   "abstract": "ABSTRACT The sluggish kinetics, severe structural degradation, and ambiguous reaction pathways of conversion‐type anodes remain formidable bottlenecks for potassium‐ion batteries. Herein, a neuron‐inspired orbital‐interface engineering strategy is proposed to construct a hierarchical Co‐FeS 2 /C@C composite via a novel in situ FeS 2 ‐to‐MOF reconstruction, where porous Co‐FeS 2 nanoparticles are intertwined with an internal carbon network and encapsulated within a robust carbon shell. Functionally, synergistic orbital (co‐doping) and interface (carbon network) engineering are rationally tailored to boost the intrinsic conductivity and promote ion diffusion of FeS 2 , while the hierarchical porosity and outer shell buffer volume fluctuations, thereby concurrently enhancing reaction kinetics and structural stability. To validate this, in situ XRD first demonstrates the highly reversible successive conversion mechanism of FeS 2 . Furthermore, comprehensive experimental and theoretical results verify optimized electronic states, lowered K + migration barriers, and robust structural integrity. Consequently, the Co‐FeS 2 /C@C anode delivers an exceptional rate capability (268 mA h g −1 at 20 A g −1 ) alongside long‐term cycling durability, outperforming most reported metal sulfide‐based anodes. Moreover, as‐assembled full cells exhibit outstanding battery performance even under severe mechanical deformation, reliably powering diverse high‐demand electronics and wearable sensor systems. Ultimately, this biomimetic paradigm offers a compelling strategy to develop high‐power and durable electrodes for next‐generation energy storage systems.",
-   "abstract_source": "crossref",
-   "topics": [
-    "5-mof"
-   ]
-  },
-  {
    "doi": "10.1002/adma.74645",
    "title": "Fluorine‐Rich Double‐Network Interfacial Layer Enabling Dynamic Interphase Reconstruction for High‐Capacity Zinc Metal Batteries",
    "journal": "Advanced Materials",
@@ -471,6 +457,20 @@
     "1-metal-anode",
     "3-sei-interface",
     "4-current-collector"
+   ]
+  },
+  {
+   "doi": "10.1002/adma.74460",
+   "title": "Neuron‐Inspired Orbital‐Interface Engineering of FeS 2 Anodes for Ultrafast and Durable Potassium Storage",
+   "journal": "Advanced Materials",
+   "authors": "Lizhong Liu et al.",
+   "date": "2026-08-17",
+   "date_kind": "published-online (Crossref)",
+   "url": "https://doi.org/10.1002/adma.74460",
+   "abstract": "ABSTRACT The sluggish kinetics, severe structural degradation, and ambiguous reaction pathways of conversion‐type anodes remain formidable bottlenecks for potassium‐ion batteries. Herein, a neuron‐inspired orbital‐interface engineering strategy is proposed to construct a hierarchical Co‐FeS 2 /C@C composite via a novel in situ FeS 2 ‐to‐MOF reconstruction, where porous Co‐FeS 2 nanoparticles are intertwined with an internal carbon network and encapsulated within a robust carbon shell. Functionally, synergistic orbital (co‐doping) and interface (carbon network) engineering are rationally tailored to boost the intrinsic conductivity and promote ion diffusion of FeS 2 , while the hierarchical porosity and outer shell buffer volume fluctuations, thereby concurrently enhancing reaction kinetics and structural stability. To validate this, in situ XRD first demonstrates the highly reversible successive conversion mechanism of FeS 2 . Furthermore, comprehensive experimental and theoretical results verify optimized electronic states, lowered K + migration barriers, and robust structural integrity. Consequently, the Co‐FeS 2 /C@C anode delivers an exceptional rate capability (268 mA h g −1 at 20 A g −1 ) alongside long‐term cycling durability, outperforming most reported metal sulfide‐based anodes. Moreover, as‐assembled full cells exhibit outstanding battery performance even under severe mechanical deformation, reliably powering diverse high‐demand electronics and wearable sensor systems. Ultimately, this biomimetic paradigm offers a compelling strategy to develop high‐power and durable electrodes for next‐generation energy storage systems.",
+   "abstract_source": "crossref",
+   "topics": [
+    "5-mof"
    ]
   },
   {
