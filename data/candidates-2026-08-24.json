@@ -2,7 +2,7 @@
  "run_date": "2026-08-24",
  "window_start": "2026-08-16",
  "window_end": "2026-08-23",
- "generated_utc": "2026-08-24T05:00:17+00:00",
+ "generated_utc": "2026-08-24T05:34:43+00:00",
  "discovery_mode": "Crossref REST API (single path)",
  "journal_stats": [
   {
@@ -99,8 +99,8 @@
   {
    "journal": "Advanced Materials",
    "date_field": "online",
-   "scanned": 136,
-   "fetched": 136,
+   "scanned": 138,
+   "fetched": 138,
    "candidates": 15
   },
   {
@@ -113,8 +113,8 @@
   {
    "journal": "ACS Energy Letters",
    "date_field": "online",
-   "scanned": 5,
-   "fetched": 5,
+   "scanned": 7,
+   "fetched": 7,
    "candidates": 2
   }
  ],
