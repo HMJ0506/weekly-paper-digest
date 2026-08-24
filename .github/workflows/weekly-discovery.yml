@@ -49,6 +49,10 @@ jobs:
           # Contact address for Crossref's polite pool. Kept in a secret so the
           # repository can be public. Discovery still works without it.
           CROSSREF_MAILTO: ${{ secrets.CROSSREF_MAILTO }}
+          # Free key from https://dev.springernature.com/ . Without it, abstracts
+          # for subscription Nature titles cannot be retrieved from CI at all:
+          # nature.com answers datacenter IPs with a bot challenge.
+          SPRINGER_API_KEY: ${{ secrets.SPRINGER_API_KEY }}
         run: |
           set -euo pipefail
           if [ -n "${RUN_DATE_OVERRIDE}" ]; then

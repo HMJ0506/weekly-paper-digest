@@ -12,7 +12,7 @@ The model consumes candidates.json and does precision filtering + summaries.
 Usage:  python discover.py [--run-date YYYY-MM-DD] [--out candidates.json]
 """
 import argparse, json, os, re, sys, time, unicodedata
-import urllib.request
+import urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
 # Crossref asks API clients to identify themselves; supplying a contact address
@@ -24,6 +24,12 @@ UA = ("WeeklyPaperDigest/1.0 (mailto:%s)" % MAILTO) if MAILTO else "WeeklyPaperD
 # challenge page. Crossref is fine with (and asks for) the polite UA above.
 BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
               "(KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36")
+
+# Springer Nature's own metadata API is the sanctioned way to get abstracts for
+# 10.1038 DOIs. Free key from https://dev.springernature.com/ (5000 req/day);
+# our use is a handful per week. Without a key we fall back to scraping
+# nature.com, which works from a residential IP but not from CI.
+SPRINGER_KEY = os.environ.get("SPRINGER_API_KEY", "").strip()
 
 # (display name, ISSN, date-filter strategy)
 #
@@ -206,6 +212,44 @@ ABS_RE = re.compile(r'<meta[^>]*name="dc\.description"[^>]*content="([^"]*)"', r
 ONLINE_RE = re.compile(r'<meta[^>]*name="citation_online_date"[^>]*content="([^"]*)"', re.I)
 
 
+def springer_abstract(cand):
+    """Ask Springer Nature's metadata API for the abstract. Returns True on
+    success. No-op when no API key is configured."""
+    if not SPRINGER_KEY:
+        return False
+    url = ("https://api.springernature.com/meta/v2/json?q=doi:%s&api_key=%s"
+           % (urllib.parse.quote(cand["doi"]), urllib.parse.quote(SPRINGER_KEY)))
+    try:
+        payload = json.loads(get(url, timeout=40, retries=2))
+    except Exception as exc:              # noqa: BLE001
+        cand["enrich_error"] = "springer api: %s: %s" % (type(exc).__name__, exc)
+        return False
+
+    records = payload.get("records") or []
+    if not records:
+        cand["enrich_error"] = "springer api: DOI not in index"
+        return False
+
+    rec = records[0]
+    abstract = rec.get("abstract")
+    if isinstance(abstract, dict):        # some records nest it under {"p": ...}
+        abstract = abstract.get("p") or abstract.get("#text") or ""
+    if isinstance(abstract, list):
+        abstract = " ".join(str(x) for x in abstract)
+    abstract = clean(abstract or "")
+    if not abstract:
+        cand["enrich_error"] = "springer api: record has no abstract"
+        return False
+
+    cand["abstract"] = abstract
+    cand["abstract_source"] = "springer nature meta api"
+    cand.pop("enrich_error", None)
+    online = rec.get("onlineDate") or rec.get("publicationDate")
+    if online:
+        cand["online_date_verified"] = str(online)[:10]
+    return True
+
+
 def enrich_nature(cand):
     """Springer Nature deposits abstracts to Crossref only for its open-access
     titles (Nature Communications). For the subscription titles the abstract
@@ -217,6 +261,11 @@ def enrich_nature(cand):
     made GitHub Actions runs lose every subscription-Nature abstract silently.
     Hence the browser User-Agent, the retries, and -- critically -- recording
     an explicit error when the page comes back without the tags."""
+    # Publisher API first when a key is configured -- authenticated, allowed
+    # from CI, and not subject to the bot challenge below.
+    if springer_abstract(cand):
+        return
+
     try:
         suffix = cand["doi"].split("/", 1)[1]
     except IndexError:

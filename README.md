@@ -31,9 +31,13 @@ egress is open, and the writing agent reads the result over HTTPS.
 
 ## Configuration
 
-`CROSSREF_MAILTO` (repository secret, optional) — a contact address for
-[Crossref's polite pool](https://api.crossref.org). Discovery works without it,
-just on the slower shared pool.
+Both are repository secrets, both optional; discovery runs without either.
+
+- `CROSSREF_MAILTO` — a contact address for [Crossref's polite pool](https://api.crossref.org).
+  Without it, requests go to the slower shared pool.
+- `SPRINGER_API_KEY` — free key from [dev.springernature.com](https://dev.springernature.com/)
+  (5000 requests/day; this job uses a handful per week). Without it, abstracts
+  for subscription Nature titles cannot be retrieved from CI at all — see below.
 
 ## The date-field trap
 
@@ -54,14 +58,26 @@ presents a registration date as a verified online date.
 The workflow asserts all 16 journals were reachable and warns if any of those
 four scan zero records.
 
-## Known gap: subscription Nature abstracts
+## Subscription Nature abstracts
 
 Springer Nature deposits abstracts to Crossref only for its open-access titles
-(Nature Communications). For the subscription titles the abstract exists only on
-nature.com, which answers CI IP ranges with a challenge page regardless of
-User-Agent, and is unreachable from the writing sandbox. Europe PMC and OpenAlex
-have not indexed papers that recent. Those candidates are reported with title,
-journal, date and DOI only, and are listed in `enrich_failures`.
+(Nature Communications). For the subscription titles — Nature, Nature Energy,
+Nature Materials, Nature Chemistry, Nature Nanotechnology, Nature Synthesis,
+Nature Reviews Materials — the abstract is not in Crossref, and Europe PMC and
+OpenAlex have not indexed papers that recent.
+
+`discover.py` resolves them in this order:
+
+1. **Springer Nature metadata API**, if `SPRINGER_API_KEY` is set. Authenticated
+   and allowed from CI. This is the route that actually works here.
+2. **Scraping `dc.description` from nature.com.** Works from a residential IP,
+   but CI IP ranges get a ~3 KB challenge page — HTTP 200, no exception, no meta
+   tags. That silent failure once cost every subscription-Nature abstract in a
+   run, so a response without the tag is now recorded as an explicit
+   `enrich_error` and surfaced as a job warning.
+
+Anything still without an abstract is reported with title, journal, date and DOI
+only, and listed in `enrich_failures`.
 
 ## Filtering
 
