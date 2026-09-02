@@ -101,6 +101,16 @@ pip install feedparser requests
 claude            # then: /weekly-digest [YYYY-MM-DD]
 ```
 
+To make `/weekly-digest` available from any folder, expose the repo's skill
+directory as a user-level skill with a directory junction (no admin needed;
+the repo stays the single source of truth). Clone to `C:\dev\weekly-paper-digest`
+on every PC so the path in the skill file holds:
+
+```
+mkdir %USERPROFILE%\.claude\skills
+mklink /J %USERPROFILE%\.claude\skills\weekly-digest C:\dev\weekly-paper-digest\.claude\skills\weekly-digest
+```
+
 - `build_digest_input.py` - runs `discover.py` twice (a 2-day overlap recovers
   late-indexed papers), the RSS supplement, abstract fallbacks (OpenAlex,
   Semantic Scholar, Cell Press RSS for Joule), and dedupe against

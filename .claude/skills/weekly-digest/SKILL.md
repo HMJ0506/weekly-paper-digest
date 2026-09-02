@@ -8,6 +8,8 @@ disable-model-invocation: true
 
 Argument: optional run date `YYYY-MM-DD` (KST). Default = today (KST). Coverage window = run_date−8 … run_date−1 (inclusive), plus a 2-day overlap run to recover late-indexed papers.
 
+**Working directory:** every command below runs from the repo root, `C:\dev\weekly-paper-digest` (same path on every PC). If this skill was invoked from somewhere else (it is also exposed globally via a junction in `~/.claude/skills/`), `cd` there first and run `git pull --ff-only` so `seen_dois.json` and the scripts are current.
+
 ## Settings (shared across PCs - this repo is the single source of truth)
 
 - **Notion parent page for local digests:** `Weekly Paper Digest (Local)` - page id `3cfe998e-0380-81bf-82ad-d53f6c6bdb5d`. Create weekly pages under it with `notion-create-pages` (parent type `page_id`).
