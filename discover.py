@@ -167,23 +167,38 @@ def fmt_date(parts):
     return ""
 
 
+ROWS = 1000   # Crossref maximum per request; lowered only by tests
+
+
 def fetch_journal(issn, strategy, start, end):
-    """Return (items, total_results, error_or_None)."""
+    """Return (items, total_results, error_or_None).
+
+    Pages with Crossref deep-paging cursors so a journal with more than ROWS
+    records in the window (Nature Communications is at ~290/week) is still
+    scanned completely instead of silently truncated at the first page."""
     if strategy == "online":
         filt = "from-online-pub-date:%s,until-online-pub-date:%s" % (start, end)
     else:
         filt = "from-created-date:%s,until-created-date:%s" % (start, end)
-    url = ("https://api.crossref.org/journals/%s/works"
-           "?filter=%s&rows=1000"
-           "&select=DOI,title,published-online,created,abstract,author,URL"
-           % (issn, filt))
+    base = ("https://api.crossref.org/journals/%s/works"
+            "?filter=%s&rows=%d"
+            "&select=DOI,title,published-online,created,abstract,author,URL"
+            % (issn, filt, ROWS))
     if MAILTO:
-        url += "&mailto=%s" % MAILTO
-    try:
-        msg = json.loads(get(url))["message"]
-    except Exception as exc:              # noqa: BLE001
-        return [], 0, "%s: %s" % (type(exc).__name__, exc)
-    return msg.get("items", []), msg.get("total-results", 0), None
+        base += "&mailto=%s" % MAILTO
+    items, total, cursor = [], 0, "*"
+    while True:
+        try:
+            msg = json.loads(get(base + "&cursor=" + urllib.parse.quote(cursor)))["message"]
+        except Exception as exc:          # noqa: BLE001
+            return [], 0, "%s: %s" % (type(exc).__name__, exc)
+        page = msg.get("items", [])
+        total = msg.get("total-results", 0)
+        items.extend(page)
+        cursor = msg.get("next-cursor")
+        if not page or len(items) >= total or not cursor:
+            return items, total, None
+        time.sleep(0.4)
 
 
 def classify(title, abstract):
