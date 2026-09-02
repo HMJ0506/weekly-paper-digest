@@ -128,6 +128,10 @@ def clean(text):
                  ("&quot;", '"'), ("&#38;", "&"), ("&nbsp;", " ")):
         text = text.replace(a, b)
     text = unicodedata.normalize("NFKC", text)
+    # Wiley deposits U+2010 HYPHEN in titles/abstracts ("Anode‐Free"); NFKC keeps
+    # it, so the ASCII "anode-?free|anode-?less" patterns silently miss those
+    # papers (verified 2026-09-03 on 10.1002/adma.74820, 10.1002/aenm.71042).
+    text = re.sub(r"[‐‑‒–—―−]", "-", text)
     return re.sub(r"\s+", " ", text).strip()
 
 
