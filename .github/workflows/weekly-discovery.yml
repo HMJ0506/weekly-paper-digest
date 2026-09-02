@@ -8,13 +8,20 @@ name: Weekly paper discovery
 # egress, and the sandbox CAN read from GitHub, so discovery runs here and the
 # writing agent picks the result up from the repo.
 #
-# Timing: Sunday 23:10 UTC = Monday 08:10 KST, an hour ahead of the cloud
-# routine at Monday 00:07 UTC (09:07 KST). The gap absorbs GitHub's scheduling
-# delay, which can exceed 15 minutes under load.
+# Timing: two scheduled attempts, Sunday 20:10 UTC (Monday 05:10 KST) and
+# Sunday 22:10 UTC (Monday 07:10 KST), ahead of the cloud routine at Monday
+# 00:07 UTC (09:07 KST). The old single slot (23:10 UTC, 57 min ahead) was
+# not enough: on 2026-08-31 GitHub started the job 2 h 11 min late (01:21 UTC),
+# the routine read the previous week's candidates.json and published an empty
+# digest. A 4 h lead plus a second attempt covers the delays seen so far
+# (23 min on 08-24, 131 min on 08-31). Both attempts compute the same RUN_DATE
+# (Monday KST) and window; the second simply refreshes the file if the first
+# already ran, and "concurrency" prevents overlap.
 
 on:
   schedule:
-    - cron: '10 23 * * 0'
+    - cron: '10 20 * * 0'
+    - cron: '10 22 * * 0'
   workflow_dispatch:
     inputs:
       run_date:

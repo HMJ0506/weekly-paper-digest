@@ -18,7 +18,7 @@ egress is open, and the writing agent reads the result over HTTPS.
 
 | Stage | Where | When |
 |---|---|---|
-| Discovery | GitHub Actions (this repo) | Sun 23:10 UTC = Mon 08:10 KST |
+| Discovery | GitHub Actions (this repo) | Sun 20:10 UTC and 22:10 UTC = Mon 05:10 / 07:10 KST (two attempts; see workflow comment) |
 | Writing + publishing | scheduled cloud agent | Mon 00:07 UTC = Mon 09:07 KST |
 
 ## Files
