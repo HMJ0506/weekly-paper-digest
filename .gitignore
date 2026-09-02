@@ -2,3 +2,12 @@ __pycache__/
 *.pyc
 discovery.log
 .verify/
+
+# --- local writing pipeline (/weekly-digest) ---
+local_data/
+digests/*.md
+CLAUDE.local.md
+feedly.opml
+.env
+*.key
+*.token

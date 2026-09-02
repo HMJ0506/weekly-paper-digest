@@ -4,10 +4,10 @@ Weekly scan of 16 high-impact journals for newly published papers on metal
 batteries, anode-free cells, SEI / electrode–electrolyte interface engineering,
 current-collector engineering, and MOF materials applied to those problems.
 
-This repository holds only the **discovery** half: a scheduled job that queries
-Crossref and commits `candidates.json`. A separate scheduled agent reads that
-file and writes the report; its instructions live in that agent's own
-configuration, not here.
+This repository holds the **discovery** stage (a scheduled job that queries
+Crossref and commits `candidates.json`; a separate cloud agent reads that file
+and writes the report) **and a local writing pipeline** that runs the whole
+thing on a PC with Claude Code - see "Local pipeline" below.
 
 ## Why it is split
 
@@ -86,3 +86,29 @@ writing agent discards false positives using each abstract. A battery/
 electrochemistry domain gate keeps out cross-domain homographs; without it,
 "dendritic cell" pulled a melanoma immunotherapy paper into the metal-anode
 topic.
+
+## Local pipeline (`/weekly-digest` in Claude Code)
+
+Runs discovery + writing in one session on any PC with open internet access,
+publishing to a separate Notion page (`Weekly Paper Digest (Local)`) so it can
+be cross-validated against the cloud digest.
+
+```
+git clone https://github.com/HMJ0506/weekly-paper-digest.git
+cd weekly-paper-digest
+pip install feedparser requests
+# set CROSSREF_MAILTO and SPRINGER_API_KEY as user environment variables (see the skill file)
+claude            # then: /weekly-digest [YYYY-MM-DD]
+```
+
+- `build_digest_input.py` - runs `discover.py` twice (a 2-day overlap recovers
+  late-indexed papers), the RSS supplement, abstract fallbacks (OpenAlex,
+  Semantic Scholar, Cell Press RSS for Joule), and dedupe against
+  `digests/seen_dois.json` -> `local_data/digest_input-<date>.json`
+- `rss_supplement.py` - publisher RSS feeds (Nature family, Wiley, Cell Press,
+  Science; ACS and RSC block automated clients) verified against Crossref dates
+- `record_published.py` - records published DOIs in `digests/seen_dois.json`;
+  commit and push it after every run so every PC dedupes against the same list
+- `.claude/skills/weekly-digest/SKILL.md` - the writing rules, page layout and
+  shared settings (Notion page ids, environment variable names)
+- `local_data/`, `digests/*.md`, `CLAUDE.local.md`, `feedly.opml` are git-ignored
